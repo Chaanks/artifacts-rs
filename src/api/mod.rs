@@ -11,7 +11,8 @@ use schema::{
     response::{
         my_characters::{
             CharacterCraftData, CharacterEquipData, CharacterFightData, CharacterGatherData,
-            CharacterMovementData, CharacterRecycleData, CharacterRestData, CharacterUseItemData,
+            CharacterGoldTransactionData, CharacterItemTransactionData, CharacterMovementData,
+            CharacterRecycleData, CharacterRestData, CharacterUseItemData,
         },
         ResponseError, StatusData,
     },
@@ -309,6 +310,64 @@ impl Api {
     ) -> Result<CharacterRecycleData, ResponseError> {
         self.send(HttpRequest {
             path: format!("/my/{name}/action/recycling"),
+            data: Some(json!({"code": code, "quantity": quantity})),
+            query: None,
+            method: Method::POST,
+        })
+        .await
+    }
+
+    pub async fn action_deposit_gold(
+        &self,
+        name: &str,
+        quantity: u32,
+    ) -> Result<CharacterGoldTransactionData, ResponseError> {
+        self.send(HttpRequest {
+            path: format!("/my/{name}/action/bank/deposit/gold"),
+            data: Some(json!({"quantity": quantity})),
+            query: None,
+            method: Method::POST,
+        })
+        .await
+    }
+
+    pub async fn action_withdraw_gold(
+        &self,
+        name: &str,
+        quantity: u32,
+    ) -> Result<CharacterGoldTransactionData, ResponseError> {
+        self.send(HttpRequest {
+            path: format!("/my/{name}/action/bank/withdraw/gold"),
+            data: Some(json!({"quantity": quantity})),
+            query: None,
+            method: Method::POST,
+        })
+        .await
+    }
+
+    pub async fn action_deposit_item(
+        &self,
+        name: &str,
+        code: &ItemCode,
+        quantity: u32,
+    ) -> Result<CharacterItemTransactionData, ResponseError> {
+        self.send(HttpRequest {
+            path: format!("/my/{name}/action/bank/deposit"),
+            data: Some(json!({"code": code, "quantity": quantity})),
+            query: None,
+            method: Method::POST,
+        })
+        .await
+    }
+
+    pub async fn action_withdraw_item(
+        &self,
+        name: &str,
+        code: &ItemCode,
+        quantity: u32,
+    ) -> Result<CharacterItemTransactionData, ResponseError> {
+        self.send(HttpRequest {
+            path: format!("/my/{name}/action/bank/withdraw"),
             data: Some(json!({"code": code, "quantity": quantity})),
             query: None,
             method: Method::POST,
