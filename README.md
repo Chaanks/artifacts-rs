@@ -3,13 +3,83 @@
 ## Introduction
 A Rust API client for Artifacts, providing type-safe access to the game's HTTP endpoints. This client simplifies automation and tool development for the Artifacts MMORPG.
 
-## Overview
+## Examples
 
+### Basic Usage
+
+Initialize the API client:
 ```rust
-    let tokens = "TOKEN";
-    let api = Api::new(tokens.to_string());
-    let result = api.status().await;
-    assert!(result.is_ok());
+let tokens = "TOKEN";
+let api = Api::new(tokens.to_string());
+let result = api.status().await;
+assert!(result.is_ok());
+```
+
+Move your character:
+```rust
+// Move character to coordinates (1, 2)
+let movement = api.action_move("character_name", 1, 2).await?;
+println!("Moved to: ({}, {})", movement.destination.x, movement.destination.y);
+```
+
+Fight with your character:
+```rust
+// Initiate combat
+let fight = api.action_fight("character_name").await?;
+println!("Combat initiated!");
+```
+
+### Advanced Usage
+
+Define custom actions using the `Action` trait:
+```rust
+pub(crate) trait Action {
+    type ResponseData;
+
+    async fn execute(
+        &self,
+        api: &Api,
+    ) -> Result<Self::ResponseData, ResponseError>;
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Move {
+    pub x: i32,
+    pub y: i32,
+}
+
+impl Move {
+    pub fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
+}
+
+impl Action for Move {
+    type ResponseData = CharacterMovement;
+
+    async fn execute(
+        &self,
+        api: &Api,
+    ) -> Result<Self::ResponseData, ResponseError> {
+        let resp = api.action_move(&character.name, self.x, self.y).await;
+        match resp {
+            Ok(data) => {
+                info!(
+                    "[{}] Successfully moved to {} {{{},{}}}",
+                    character.name,
+                    data.destination.name,
+                    data.destination.x,
+                    data.destination.y
+                );
+                Ok(data)
+            }
+            Err(err) => {
+                error!("[{}] Error ({err})", character.name.colored());
+                Err(err)
+            }
+        }
+    }
+}
 ```
 
 
