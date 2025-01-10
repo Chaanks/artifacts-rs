@@ -94,7 +94,7 @@ impl Action for Move {
 | Endpoint | Method | Path | Status |
 |----------|--------|------|--------|
 | Get My Account | GET | `/my/account` | ⬜ |
-| Get Bank Details | GET | `/bank/details` | ⬜ |
+| Get Bank Details | GET | `/bank/details` | ✅ |
 | Get Bank Items | GET | `/bank/items` | ✅ |
 | Get GE Sell Orders | GET | `/ge/orders` | ⬜ |
 | Get GE Sell History | GET | `/ge/history` | ⬜ |
