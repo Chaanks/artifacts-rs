@@ -254,10 +254,8 @@ pub enum CooldownReason {
     CancelGe,
     #[serde(rename = "delete_item")]
     DeleteItem,
-    #[serde(rename = "deposit_bank")]
-    DepositBank,
-    #[serde(rename = "withdraw_bank")]
-    WithdrawBank,
+    Deposit,
+    Withdraw,
     #[serde(rename = "deposit_gold")]
     DepositGold,
     #[serde(rename = "withdraw_gold")]
@@ -265,6 +263,8 @@ pub enum CooldownReason {
     Equip,
     Unequip,
     Task,
+    #[serde(rename = "christmas_exchange")]
+    ChristmasExchange,
     Recycling,
     Rest,
     Use,

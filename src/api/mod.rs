@@ -9,6 +9,7 @@ use schema::{
         monster::Monster,
     },
     response::{
+        my_account::AccountBankDetailsData,
         my_characters::{
             CharacterCraftData, CharacterEquipData, CharacterFightData, CharacterGatherData,
             CharacterGoldTransactionData, CharacterItemTransactionData, CharacterMovementData,
@@ -379,6 +380,16 @@ impl Api {
     pub async fn bank_items(&self) -> Result<Vec<ItemComponent>, ResponseError> {
         self.send(HttpRequest {
             path: "/my/bank/items".to_string(),
+            data: None,
+            query: None,
+            method: Method::GET,
+        })
+        .await
+    }
+
+    pub async fn bank_details(&self) -> Result<AccountBankDetailsData, ResponseError> {
+        self.send(HttpRequest {
+            path: "/my/bank".to_string(),
             data: None,
             query: None,
             method: Method::GET,
