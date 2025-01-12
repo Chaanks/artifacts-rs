@@ -165,6 +165,31 @@ pub enum ItemType {
     Utility,
 }
 
+impl ItemType {
+    /// Get possible slots for this item type
+    pub fn possible_slots(&self) -> Vec<ItemSlot> {
+        match self {
+            ItemType::Helmet => vec![ItemSlot::Helmet],
+            ItemType::Weapon => vec![ItemSlot::Weapon],
+            ItemType::Shield => vec![ItemSlot::Shield],
+            ItemType::Ring => vec![ItemSlot::Ring1, ItemSlot::Ring2],
+            ItemType::BodyArmor => vec![ItemSlot::BodyArmor],
+            ItemType::LegArmor => vec![ItemSlot::LegArmor],
+            ItemType::Boots => vec![ItemSlot::Boots],
+            ItemType::Amulet => vec![ItemSlot::Amulet],
+            ItemType::Artifact => vec![
+                ItemSlot::Artifact1,
+                ItemSlot::Artifact2,
+                ItemSlot::Artifact3,
+            ],
+            ItemType::Consumable | ItemType::Food | ItemType::Utility => {
+                vec![ItemSlot::Utility1, ItemSlot::Utility2]
+            }
+            _ => vec![],
+        }
+    }
+}
+
 /// Represents the various item slots available for a character.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -182,21 +207,23 @@ pub enum ItemSlot {
     /// The boots slot.
     Boots,
     /// The first ring slot.
-    RingFirst,
+    Ring1,
     /// The second ring slot.
-    RingSecond,
+    Ring2,
     /// The amulet slot.
     Amulet,
     /// The first artifact slot.
-    ArtifactFirst,
+    Artifact1,
     /// The second artifact slot.
-    ArtifactSecond,
+    Artifact2,
     /// The third artifact slot.
-    ArtifactThird,
+    Artifact3,
     /// The first consumable slot.
-    ConsumableFirst,
+    Utility1,
     /// The second consumable slot.
-    ConsumableSecond,
+    Utility2,
+    /// Undefined slot.
+    Undefined,
 }
 
 impl ItemSlot {
@@ -208,11 +235,9 @@ impl ItemSlot {
             ItemSlot::BodyArmor => ItemType::BodyArmor,
             ItemSlot::LegArmor => ItemType::LegArmor,
             ItemSlot::Boots => ItemType::Boots,
-            ItemSlot::RingFirst | ItemSlot::RingSecond => ItemType::Ring,
+            ItemSlot::Ring1 | ItemSlot::Ring2 => ItemType::Ring,
             ItemSlot::Amulet => ItemType::Amulet,
-            ItemSlot::ArtifactFirst | ItemSlot::ArtifactSecond | ItemSlot::ArtifactThird => {
-                ItemType::Artifact
-            }
+            ItemSlot::Artifact1 | ItemSlot::Artifact2 | ItemSlot::Artifact3 => ItemType::Artifact,
             _ => panic!("Unhandled item slot!"),
         }
     }

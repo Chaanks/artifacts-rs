@@ -1,5 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+use crate::api::ItemSlot;
+
+use super::item::ItemType;
+
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Character {
     /// Name of the character.
@@ -168,6 +172,60 @@ pub struct Equipment {
     pub artifact1_slot: String,
     pub artifact2_slot: String,
     pub artifact3_slot: String,
+}
+
+impl Equipment {
+    /// Check if a slot is empty
+    pub fn is_slot_empty(&self, slot: &ItemSlot) -> bool {
+        match slot {
+            ItemSlot::Weapon => self.weapon_slot.is_empty(),
+            ItemSlot::Shield => self.shield_slot.is_empty(),
+            ItemSlot::Helmet => self.helmet_slot.is_empty(),
+            ItemSlot::BodyArmor => self.body_armor_slot.is_empty(),
+            ItemSlot::LegArmor => self.leg_armor_slot.is_empty(),
+            ItemSlot::Boots => self.boots_slot.is_empty(),
+            ItemSlot::Ring1 => self.ring1_slot.is_empty(),
+            ItemSlot::Ring2 => self.ring2_slot.is_empty(),
+            ItemSlot::Amulet => self.amulet_slot.is_empty(),
+            ItemSlot::Artifact1 => self.artifact1_slot.is_empty(),
+            ItemSlot::Artifact2 => self.artifact2_slot.is_empty(),
+            ItemSlot::Artifact3 => self.artifact3_slot.is_empty(),
+            _ => false,
+        }
+    }
+
+    /// Get the item code in a specific slot
+    pub fn item_in_slot(&self, slot: &ItemSlot) -> Option<&str> {
+        let item = match slot {
+            ItemSlot::Weapon => &self.weapon_slot,
+            ItemSlot::Shield => &self.shield_slot,
+            ItemSlot::Helmet => &self.helmet_slot,
+            ItemSlot::BodyArmor => &self.body_armor_slot,
+            ItemSlot::LegArmor => &self.leg_armor_slot,
+            ItemSlot::Boots => &self.boots_slot,
+            ItemSlot::Ring1 => &self.ring1_slot,
+            ItemSlot::Ring2 => &self.ring2_slot,
+            ItemSlot::Amulet => &self.amulet_slot,
+            ItemSlot::Artifact1 => &self.artifact1_slot,
+            ItemSlot::Artifact2 => &self.artifact2_slot,
+            ItemSlot::Artifact3 => &self.artifact3_slot,
+            _ => return None,
+        };
+
+        if item.is_empty() {
+            None
+        } else {
+            Some(item)
+        }
+    }
+
+    /// Find first available slot for an item type
+    pub fn find_available_slot(&self, item_type: &ItemType) -> Option<ItemSlot> {
+        let possible_slots = item_type.possible_slots();
+        possible_slots
+            .into_iter()
+            .find(|slot| self.is_slot_empty(slot))
+    }
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
