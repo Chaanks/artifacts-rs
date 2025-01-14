@@ -399,7 +399,7 @@ impl Api {
 
     /* Items */
     pub async fn items(&self) -> Result<Vec<Item>, ResponseError> {
-        self.send(HttpRequest {
+        self.send_paginated(HttpRequest {
             path: "/items".to_string(),
             data: None,
             query: None,
