@@ -75,67 +75,67 @@ pub struct CombatStats {
 pub struct Skills {
     // Mining
     #[serde(rename = "mining_level")]
-    pub mining_level: Option<i32>,
+    pub mining_level: Option<u32>,
     #[serde(rename = "mining_xp")]
-    pub mining_xp: Option<i32>,
+    pub mining_xp: Option<u32>,
     #[serde(rename = "mining_max_xp")]
-    pub mining_max_xp: Option<i32>,
+    pub mining_max_xp: Option<u32>,
 
     // Woodcutting
     #[serde(rename = "woodcutting_level")]
-    pub woodcutting_level: Option<i32>,
+    pub woodcutting_level: Option<u32>,
     #[serde(rename = "woodcutting_xp")]
-    pub woodcutting_xp: Option<i32>,
+    pub woodcutting_xp: Option<u32>,
     #[serde(rename = "woodcutting_max_xp")]
-    pub woodcutting_max_xp: Option<i32>,
+    pub woodcutting_max_xp: Option<u32>,
 
     // Fishing
     #[serde(rename = "fishing_level")]
-    pub fishing_level: Option<i32>,
+    pub fishing_level: Option<u32>,
     #[serde(rename = "fishing_xp")]
-    pub fishing_xp: Option<i32>,
+    pub fishing_xp: Option<u32>,
     #[serde(rename = "fishing_max_xp")]
-    pub fishing_max_xp: Option<i32>,
+    pub fishing_max_xp: Option<u32>,
 
     // Weaponcrafting
     #[serde(rename = "weaponcrafting_level")]
-    pub weaponcrafting_level: Option<i32>,
+    pub weaponcrafting_level: Option<u32>,
     #[serde(rename = "weaponcrafting_xp")]
-    pub weaponcrafting_xp: Option<i32>,
+    pub weaponcrafting_xp: Option<u32>,
     #[serde(rename = "weaponcrafting_max_xp")]
-    pub weaponcrafting_max_xp: Option<i32>,
+    pub weaponcrafting_max_xp: Option<u32>,
 
     // Gearcrafting
     #[serde(rename = "gearcrafting_level")]
-    pub gearcrafting_level: Option<i32>,
+    pub gearcrafting_level: Option<u32>,
     #[serde(rename = "gearcrafting_xp")]
-    pub gearcrafting_xp: Option<i32>,
+    pub gearcrafting_xp: Option<u32>,
     #[serde(rename = "gearcrafting_max_xp")]
-    pub gearcrafting_max_xp: Option<i32>,
+    pub gearcrafting_max_xp: Option<u32>,
 
     // Jewelrycrafting
     #[serde(rename = "jewelrycrafting_level")]
-    pub jewelrycrafting_level: Option<i32>,
+    pub jewelrycrafting_level: Option<u32>,
     #[serde(rename = "jewelrycrafting_xp")]
-    pub jewelrycrafting_xp: Option<i32>,
+    pub jewelrycrafting_xp: Option<u32>,
     #[serde(rename = "jewelrycrafting_max_xp")]
-    pub jewelrycrafting_max_xp: Option<i32>,
+    pub jewelrycrafting_max_xp: Option<u32>,
 
     // Cooking
     #[serde(rename = "cooking_level")]
-    pub cooking_level: Option<i32>,
+    pub cooking_level: Option<u32>,
     #[serde(rename = "cooking_xp")]
-    pub cooking_xp: Option<i32>,
+    pub cooking_xp: Option<u32>,
     #[serde(rename = "cooking_max_xp")]
-    pub cooking_max_xp: Option<i32>,
+    pub cooking_max_xp: Option<u32>,
 
     // Alchemy
     #[serde(rename = "alchemy_level")]
-    pub alchemy_level: Option<i32>,
+    pub alchemy_level: Option<u32>,
     #[serde(rename = "alchemy_xp")]
-    pub alchemy_xp: Option<i32>,
+    pub alchemy_xp: Option<u32>,
     #[serde(rename = "alchemy_max_xp")]
-    pub alchemy_max_xp: Option<i32>,
+    pub alchemy_max_xp: Option<u32>,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
@@ -331,7 +331,7 @@ pub enum CooldownReason {
 }
 
 /// Represents the different skills that a character has within the game.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[serde(rename_all = "lowercase")]
 pub enum Skill {
     /// Fishing skill, allowing for gathering fish.
@@ -350,10 +350,38 @@ pub enum Skill {
     Woodcutting,
     /// Alchemy skill, for creating potion and related resources.
     Alchemy,
+    /// Fighting skill
+    Fighting,
 }
 
 impl Skill {
     pub fn to_string(&self) -> String {
         serde_plain::to_string(self).unwrap()
+    }
+
+    pub fn is_gathering(&self) -> bool {
+        matches!(
+            self,
+            Skill::Mining | Skill::Woodcutting | Skill::Fishing | Skill::Alchemy
+        )
+    }
+}
+
+impl std::str::FromStr for Skill {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "fishing" => Ok(Skill::Fishing),
+            "cooking" => Ok(Skill::Cooking),
+            "gearcrafting" => Ok(Skill::Gearcrafting),
+            "mining" => Ok(Skill::Mining),
+            "jewelrycrafting" => Ok(Skill::Jewelrycrafting),
+            "weaponcrafting" => Ok(Skill::Weaponcrafting),
+            "woodcutting" => Ok(Skill::Woodcutting),
+            "alchemy" => Ok(Skill::Alchemy),
+            "fighting" => Ok(Skill::Fighting),
+            _ => Err(format!("Unknown skill: {}", s)),
+        }
     }
 }
